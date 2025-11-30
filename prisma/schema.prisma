@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(cuid())
+  name          String?
+  email         String         @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  accounts      Account[]
+  sessions      Session[]
+  forms         Form[]
+  subscription  Subscription?
+  purchases     FormPurchase[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Form {
+  id              String         @id @default(cuid())
+  title           String
+  description     String?        @db.Text
+  creatorId       String
+  creator         User           @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  questions       Question[]
+  responses       Response[]
+  isActive        Boolean        @default(true)
+  isPublished     Boolean        @default(false)
+  publicId        String         @unique @default(cuid())
+  settings        Json?
+  logoUrl         String?
+  organizationName String?
+  headerColor     String?        @default("#2563EB")
+  allowMultiple   Boolean        @default(false)
+  showProgress    Boolean        @default(true)
+  shuffleQuestions Boolean       @default(false)
+  isPaid          Boolean        @default(false)
+  purchaseId      String?        @unique
+  purchase        FormPurchase?  @relation(fields: [purchaseId], references: [id])
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([creatorId])
+  @@index([publicId])
+}
+
+model Question {
+  id          String   @id @default(cuid())
+  formId      String
+  form        Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  type        String
+  label       String   @db.Text
+  description String?  @db.Text
+  required    Boolean  @default(false)
+  options     Json?
+  validation  Json?
+  order       Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([formId])
+}
+
+model Response {
+  id         String   @id @default(cuid())
+  formId     String
+  form       Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  answers    Json
+  metadata   Json?
+  ipAddress  String?
+  userAgent  String?  @db.Text
+  createdAt  DateTime @default(now())
+
+  @@index([formId])
+  @@index([createdAt])
+}
+
+model Subscription {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan          String   @default("organization")
+  status        String   @default("active")
+  amount        Int      @default(300)
+  currency      String   @default("INR")
+  startDate     DateTime @default(now())
+  endDate       DateTime
+  autoRenew     Boolean  @default(true)
+  paymentId     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model FormPurchase {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  formId        String?  @unique
+  form          Form?
+  amount        Int      @default(10)
+  currency      String   @default("INR")
+  status        String   @default("completed")
+  paymentId     String?
+  features      Json?
+  createdAt     DateTime @default(now())
+
+  @@index([userId])
+}
