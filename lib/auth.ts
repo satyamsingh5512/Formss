@@ -7,6 +7,10 @@ import bcrypt from "bcryptjs"
 import type { Adapter } from "next-auth/adapters"
 
 const providers: NextAuthOptions["providers"] = [
+  GoogleProvider({
+    clientId: process.env.GOOGLE_CLIENT_ID || "dummy",
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET || "dummy",
+  }),
   CredentialsProvider({
     name: "Email",
     credentials: {
@@ -41,15 +45,6 @@ const providers: NextAuthOptions["providers"] = [
     }
   }),
 ]
-
-if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
-  providers.push(
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    })
-  )
-}
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as Adapter,
