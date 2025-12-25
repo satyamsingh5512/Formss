@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Eye, Settings, Clock, Hash, Users } from 'lucide-react';
+import { Plus, Eye, Settings, Clock, Hash, Users, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function MyQuizzesPage() {
@@ -30,6 +30,23 @@ export default function MyQuizzesPage() {
             console.error('Error fetching quizzes:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const deleteQuiz = async (quizId: string) => {
+        if (!confirm('Are you sure you want to delete this quiz? This cannot be undone.')) {
+            return;
+        }
+        try {
+            const res = await fetch(`/api/forms/${quizId}`, { method: 'DELETE' });
+            if (res.ok) {
+                setQuizzes(quizzes.filter(q => q.id !== quizId));
+            } else {
+                alert('Failed to delete quiz');
+            }
+        } catch (error) {
+            console.error('Error deleting quiz:', error);
+            alert('Failed to delete quiz');
         }
     };
 
@@ -79,12 +96,21 @@ export default function MyQuizzesPage() {
                         >
                             <div className="space-y-4 mb-4">
                                 <div className="flex justify-between items-start">
-                                    <h3 className="text-xl font-bold line-clamp-1">{quiz.title}</h3>
-                                    {quiz.accessCode && (
-                                        <span className="text-xs font-bold px-2 py-1 bg-zinc-100 dark:bg-zinc-800 border border-black dark:border-white/20 rounded-md">
-                                            {quiz.accessCode}
-                                        </span>
-                                    )}
+                                    <h3 className="text-xl font-bold line-clamp-1 flex-1">{quiz.title}</h3>
+                                    <div className="flex items-center gap-2">
+                                        {quiz.accessCode && (
+                                            <span className="text-xs font-bold px-2 py-1 bg-zinc-100 dark:bg-zinc-800 border border-black dark:border-white/20 rounded-md">
+                                                {quiz.accessCode}
+                                            </span>
+                                        )}
+                                        <button
+                                            onClick={() => deleteQuiz(quiz.id)}
+                                            className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                            title="Delete Quiz"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    </div>
                                 </div>
                                 <p className="text-sm text-zinc-500 line-clamp-2 h-10">{quiz.description || "No description provided."}</p>
 
