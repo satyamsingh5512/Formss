@@ -132,13 +132,13 @@ export default function FeaturesPage() {
                         {features.map((feature, i) => (
                             <div
                                 key={i}
-                                className="neo-card hover:translate-x-[2px] hover:translate-y-[2px] transition-transform"
+                                className="neo-card hover:translate-x-[2px] hover:translate-y-[2px] transition-transform flex flex-col items-start"
                             >
-                                <div className={`w-12 h-12 ${feature.color} rounded-xl mb-4 flex items-center justify-center shadow-lg`}>
+                                <div className={`w-12 h-12 ${feature.color} border-2 border-black rounded-xl mb-4 flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.5)]`}>
                                     <feature.icon className="h-6 w-6 text-white" />
                                 </div>
                                 <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
-                                <p className="text-sm text-zinc-600 dark:text-zinc-400">{feature.description}</p>
+                                <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">{feature.description}</p>
                             </div>
                         ))}
                     </div>
