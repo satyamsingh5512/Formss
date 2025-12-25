@@ -81,32 +81,36 @@ export async function PUT(
     const body = await request.json()
     const questions = z.array(questionSchema.extend({ id: z.string().optional() })).parse(body)
 
-    // Delete all existing questions
-    await prisma.question.deleteMany({
-      where: {
-        formId: id,
-      },
+    // Use a transaction for atomic delete + create (much faster)
+    const result = await prisma.$transaction(async (tx) => {
+      // Delete all existing questions in one operation
+      await tx.question.deleteMany({
+        where: { formId: id },
+      })
+
+      // Create all new questions in one batch operation
+      // Note: MongoDB doesn't support createMany with return, so we use a workaround
+      const createdQuestions = await Promise.all(
+        questions.map((q, index) =>
+          tx.question.create({
+            data: {
+              type: q.type,
+              label: q.label,
+              description: q.description,
+              required: q.required,
+              options: q.options,
+              validation: q.validation,
+              order: index,
+              formId: id,
+            },
+          })
+        )
+      )
+
+      return createdQuestions
     })
 
-    // Create new questions
-    const createdQuestions = await Promise.all(
-      questions.map((q) =>
-        prisma.question.create({
-          data: {
-            type: q.type,
-            label: q.label,
-            description: q.description,
-            required: q.required,
-            options: q.options,
-            validation: q.validation,
-            order: q.order,
-            formId: id,
-          },
-        })
-      )
-    )
-
-    return NextResponse.json(createdQuestions)
+    return NextResponse.json(result)
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.errors }, { status: 400 })
@@ -115,3 +119,4 @@ export async function PUT(
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
+
