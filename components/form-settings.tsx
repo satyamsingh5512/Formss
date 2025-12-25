@@ -1,5 +1,7 @@
 'use client'
 
+import { useSession } from 'next-auth/react'
+
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -26,6 +28,12 @@ interface FormSettingsProps {
 
 export function FormSettings({ formId, settings, onUpdate }: FormSettingsProps) {
   const { toast } = useToast()
+  const { data: session } = useSession()
+
+  // NOTE: Hardcoded Pro access for specific user as requested
+  // In a real app, check session.user.subscription or similar
+  const isPro = session?.user?.email === 'ss2628681@gmail.com'
+
   const [isOpen, setIsOpen] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [logoPreview, setLogoPreview] = useState(settings.logoUrl || '')
@@ -172,58 +180,75 @@ export function FormSettings({ formId, settings, onUpdate }: FormSettingsProps) 
                   </TabsList>
 
                   <TabsContent value="branding" className="space-y-6 focus-visible:outline-none">
-                    {/* Logo Upload */}
+                    {/* Logo Upload - Pro Feature */}
                     <div className="space-y-3">
-                      <Label className="text-black dark:text-white font-bold">Organization Logo</Label>
-                      <div className="space-y-3">
-                        {logoPreview ? (
-                          <div className="relative w-40 h-40 border-2 border-dashed border-black/20 dark:border-white/20 rounded-xl flex items-center justify-center bg-zinc-50 dark:bg-white/5 overflow-hidden group">
-                            <img
-                              src={logoPreview}
-                              alt="Logo"
-                              className="max-w-full max-h-full object-contain p-2"
-                            />
-                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                              <Button
-                                variant="destructive"
-                                size="sm"
-                                onClick={removeLogo}
-                                className="h-9 font-bold"
-                              >
-                                Remove
-                              </Button>
-                            </div>
-                          </div>
-                        ) : (
-                          <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-black/20 dark:border-white/20 rounded-xl cursor-pointer bg-zinc-50 dark:bg-white/5 hover:bg-zinc-100 dark:hover:bg-white/10 transition-colors">
-                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                              <div className="p-3 rounded-full bg-white dark:bg-white/10 mb-3 text-zinc-400 border-2 border-black/5">
-                                <ImageIcon className="h-6 w-6" />
-                              </div>
-                              <p className="text-sm text-zinc-500 font-medium">
-                                <span className="font-bold text-black dark:text-white">Click to upload</span> or drag and drop
-                              </p>
-                            </div>
-                            <input
-                              type="file"
-                              className="hidden"
-                              accept="image/*"
-                              onChange={handleLogoUpload}
-                              disabled={uploading}
-                            />
-                          </label>
-                        )}
+                      <div className="flex items-center justify-between">
+                        <Label className="text-black dark:text-white font-bold">Organization Logo</Label>
+                        {!isPro && <span className="px-2 py-0.5 bg-yellow-400 text-black text-[10px] font-bold rounded-full border border-black uppercase tracking-wider">Pro Feature</span>}
                       </div>
+
+                      {isPro ? (
+                        <div className="space-y-3">
+                          {logoPreview ? (
+                            <div className="relative w-40 h-40 border-2 border-dashed border-black/20 dark:border-white/20 rounded-xl flex items-center justify-center bg-zinc-50 dark:bg-white/5 overflow-hidden group">
+                              <img
+                                src={logoPreview}
+                                alt="Logo"
+                                className="max-w-full max-h-full object-contain p-2"
+                              />
+                              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <Button
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={removeLogo}
+                                  className="h-9 font-bold"
+                                >
+                                  Remove
+                                </Button>
+                              </div>
+                            </div>
+                          ) : (
+                            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-black/20 dark:border-white/20 rounded-xl cursor-pointer bg-zinc-50 dark:bg-white/5 hover:bg-zinc-100 dark:hover:bg-white/10 transition-colors">
+                              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                <div className="p-3 rounded-full bg-white dark:bg-white/10 mb-3 text-zinc-400 border-2 border-black/5">
+                                  <ImageIcon className="h-6 w-6" />
+                                </div>
+                                <p className="text-sm text-zinc-500 font-medium">
+                                  <span className="font-bold text-black dark:text-white">Click to upload</span> or drag and drop
+                                </p>
+                              </div>
+                              <input
+                                type="file"
+                                className="hidden"
+                                accept="image/*"
+                                onChange={handleLogoUpload}
+                                disabled={uploading}
+                              />
+                            </label>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="p-4 rounded-xl bg-zinc-100 dark:bg-zinc-800 border-2 border-zinc-200 dark:border-white/10 text-center">
+                          <p className="text-sm text-zinc-500 font-medium mb-3">Upgrade to remove branding and add your own logo.</p>
+                          <a href="/pricing" className="inline-block px-4 py-2 bg-black dark:bg-white text-white dark:text-black text-xs font-bold rounded-lg hover:opacity-80 transition-opacity">
+                            View Plans
+                          </a>
+                        </div>
+                      )}
                     </div>
 
-                    {/* Organization Name */}
+                    {/* Organization Name - Pro Feature */}
                     <div className="space-y-2">
-                      <Label className="text-black dark:text-white font-bold">Organization Name</Label>
+                      <div className="flex items-center justify-between">
+                        <Label className="text-black dark:text-white font-bold">Organization Name</Label>
+                        {!isPro && <span className="px-2 py-0.5 bg-yellow-400 text-black text-[10px] font-bold rounded-full border border-black uppercase tracking-wider">Pro Feature</span>}
+                      </div>
                       <Input
                         value={organizationName}
                         onChange={(e) => setOrganizationName(e.target.value)}
-                        placeholder="Acme Corporation"
-                        className="bg-white dark:bg-zinc-900 border-2 border-black/10 dark:border-white/10 text-black dark:text-white placeholder:text-zinc-400 focus-visible:border-black dark:focus-visible:border-white rounded-lg"
+                        placeholder={isPro ? "Acme Corporation" : "Locked (Pro Feature)"}
+                        disabled={!isPro}
+                        className={`bg-white dark:bg-zinc-900 border-2 border-black/10 dark:border-white/10 text-black dark:text-white placeholder:text-zinc-400 focus-visible:border-black dark:focus-visible:border-white rounded-lg ${!isPro ? 'opacity-50 cursor-not-allowed bg-zinc-100 dark:bg-zinc-800' : ''}`}
                       />
                     </div>
 
