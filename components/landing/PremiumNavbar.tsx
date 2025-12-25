@@ -3,13 +3,15 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LayoutDashboard } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Logo } from "@/components/logo";
+import { useSession } from "next-auth/react";
 
 export function PremiumNavbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { data: session } = useSession();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -55,16 +57,27 @@ export function PremiumNavbar() {
         {/* CTA Buttons */}
         <div className="hidden md:flex items-center gap-4">
           <ThemeToggle />
-          <Link href="/auth/signin">
-            <button className="px-5 py-2 font-bold text-black dark:text-white transition-colors hover:text-black/70 dark:hover:text-white/80 border-2 border-transparent hover:border-black dark:hover:border-white/20 rounded-lg">
-              Sign In
-            </button>
-          </Link>
-          <Link href="/builder">
-            <button className="neo-button-primary rounded-lg transition-transform active:scale-95">
-              Get Started
-            </button>
-          </Link>
+          {session ? (
+            <Link href="/dashboard">
+              <button className="flex items-center gap-2 px-5 py-2 font-bold text-black dark:text-white transition-colors hover:text-black/70 dark:hover:text-white/80 border-2 border-black dark:border-white rounded-lg hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black">
+                <LayoutDashboard size={18} />
+                Dashboard
+              </button>
+            </Link>
+          ) : (
+            <>
+              <Link href="/auth/signin">
+                <button className="px-5 py-2 font-bold text-black dark:text-white transition-colors hover:text-black/70 dark:hover:text-white/80 border-2 border-transparent hover:border-black dark:hover:border-white/20 rounded-lg">
+                  Sign In
+                </button>
+              </Link>
+              <Link href="/builder">
+                <button className="neo-button-primary rounded-lg transition-transform active:scale-95">
+                  Get Started
+                </button>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -97,16 +110,27 @@ export function PremiumNavbar() {
             </Link>
           ))}
           <div className="pt-6 flex flex-col gap-4">
-            <Link href="/auth/signin" className="w-full">
-              <button className="w-full py-3 neo-button rounded-xl">
-                Sign In
-              </button>
-            </Link>
-            <Link href="/builder" className="w-full">
-              <button className="w-full py-3 neo-button-primary rounded-xl">
-                Get Started
-              </button>
-            </Link>
+            {session ? (
+              <Link href="/dashboard" className="w-full">
+                <button className="w-full py-3 neo-button-primary rounded-xl flex items-center justify-center gap-2">
+                  <LayoutDashboard size={20} />
+                  Dashboard
+                </button>
+              </Link>
+            ) : (
+              <>
+                <Link href="/auth/signin" className="w-full">
+                  <button className="w-full py-3 neo-button rounded-xl">
+                    Sign In
+                  </button>
+                </Link>
+                <Link href="/builder" className="w-full">
+                  <button className="w-full py-3 neo-button-primary rounded-xl">
+                    Get Started
+                  </button>
+                </Link>
+              </>
+            )}
           </div>
         </motion.div>
       )}
