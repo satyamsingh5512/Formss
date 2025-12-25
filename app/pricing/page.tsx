@@ -58,17 +58,17 @@ export default function PricingPage() {
                         </div>
 
                         {/* Per Form Plan - Highlighted */}
-                        <div className="neo-card border-4 border-yellow-400 dark:border-yellow-500 bg-zinc-900 dark:bg-zinc-800 text-white p-8 flex flex-col relative transform md:-translate-y-4 shadow-neo-lg">
-                            <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-yellow-400 text-black text-xs font-bold rounded-full border-2 border-black">
+                        <div className="neo-card border-2 border-yellow-500 dark:border-yellow-400 p-8 flex flex-col relative transform md:-translate-y-4 shadow-neo-lg bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-950/30 dark:to-orange-950/30">
+                            <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-yellow-500 text-black text-xs font-bold rounded-full border-2 border-black">
                                 MOST POPULAR
                             </div>
                             <div className="mb-6">
-                                <h3 className="text-xl font-bold mb-2 text-white">Per Form</h3>
-                                <p className="text-zinc-300 text-sm">Remove branding on each form</p>
+                                <h3 className="text-xl font-bold mb-2 text-yellow-700 dark:text-yellow-400">Per Form</h3>
+                                <p className="text-zinc-600 dark:text-zinc-400 text-sm">Remove branding on each form</p>
                             </div>
                             <div className="mb-6">
-                                <span className="text-4xl font-black text-white">₹10</span>
-                                <span className="text-zinc-300"> / form</span>
+                                <span className="text-4xl font-black text-yellow-700 dark:text-yellow-400">₹10</span>
+                                <span className="text-zinc-600 dark:text-zinc-400"> / form</span>
                             </div>
                             <ul className="space-y-3 mb-8 flex-1">
                                 {[
@@ -78,14 +78,14 @@ export default function PricingPage() {
                                     "Full analytics",
                                     "Priority support",
                                 ].map((feature, i) => (
-                                    <li key={i} className="flex items-center gap-2 text-sm text-white">
-                                        <Check className="h-4 w-4 text-green-400 flex-shrink-0" />
+                                    <li key={i} className="flex items-center gap-2 text-sm">
+                                        <Check className="h-4 w-4 text-yellow-600 dark:text-yellow-400 flex-shrink-0" />
                                         <span>{feature}</span>
                                     </li>
                                 ))}
                             </ul>
                             <Link href="/dashboard">
-                                <button className="w-full py-3 bg-yellow-400 text-black border-2 border-yellow-400 rounded-xl font-bold hover:bg-yellow-300 transition-colors flex items-center justify-center gap-2">
+                                <button className="w-full py-3 bg-yellow-500 text-black border-2 border-yellow-600 rounded-xl font-bold hover:bg-yellow-400 transition-colors flex items-center justify-center gap-2 shadow-lg">
                                     <Crown className="h-4 w-4" />
                                     Upgrade Form
                                 </button>
