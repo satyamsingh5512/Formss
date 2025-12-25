@@ -397,19 +397,10 @@ export default function PublicFormPage() {
           </div>
         )}
 
-        {/* Branded Header */}
-        {(form.logoUrl || form.organizationName) && (
-          <div className="text-center mb-10">
-            {form.logoUrl && (
-              <img
-                src={form.logoUrl}
-                alt="Organization Logo"
-                className="h-20 w-auto object-contain mx-auto mb-4"
-              />
-            )}
-            {form.organizationName && (
-              <h3 className="text-lg font-bold text-zinc-500 dark:text-zinc-400 tracking-wide uppercase">{form.organizationName}</h3>
-            )}
+        {/* Branded Header - Organization Name Only */}
+        {form.organizationName && (
+          <div className="text-center mb-6">
+            <h3 className="text-lg font-bold text-zinc-500 dark:text-zinc-400 tracking-wide uppercase">{form.organizationName}</h3>
           </div>
         )}
 
@@ -422,7 +413,18 @@ export default function PublicFormPage() {
             }}
           />
           <div className="p-8 md:p-10">
-            <h1 className="text-3xl md:text-4xl font-black text-black dark:text-white mb-4 leading-tight">{form.title}</h1>
+            <div className="flex flex-col md:flex-row gap-6 items-start md:items-center mb-6">
+              {form.logoUrl && (
+                <div className="flex-shrink-0 bg-white p-2 rounded-xl border-2 border-black/10 dark:border-white/10 shadow-sm">
+                  <img
+                    src={form.logoUrl}
+                    alt="Organization Logo"
+                    className="h-16 w-16 object-contain"
+                  />
+                </div>
+              )}
+              <h1 className="text-3xl md:text-4xl font-black text-black dark:text-white leading-tight">{form.title}</h1>
+            </div>
             {form.description && (
               <p className="text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed font-medium">{form.description}</p>
             )}
