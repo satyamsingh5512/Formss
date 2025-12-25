@@ -20,7 +20,7 @@ export function PremiumNavbar() {
   }, []);
 
   const navLinks = [
-    { href: "/features", label: "Features" },
+    { href: "/#features", label: "Features" },
     { href: "/quizo", label: "Quizzes" },
     { href: "/about", label: "About" },
     { href: "/pricing", label: "Pricing" },
