@@ -17,9 +17,11 @@ export default async function QuizoLayout({
     return (
         <div className="min-h-screen">
             <Sidebar currentPath="/quizo" />
-            <div className="ml-64 min-h-screen bg-transparent transition-colors duration-300">
+            {/* pt-16 for mobile header, md:pt-0 and md:ml-64 for desktop sidebar */}
+            <div className="pt-16 md:pt-0 md:ml-64 min-h-screen bg-transparent transition-colors duration-300">
                 {children}
             </div>
         </div>
     )
 }
+

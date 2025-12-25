@@ -39,9 +39,9 @@ export default async function DashboardPage() {
   const totalResponses = forms.reduce((acc, form) => acc + form._count.responses, 0)
 
   return (
-    <div className="p-8 space-y-8 animate-fade-in relative z-10 w-full overflow-hidden">
-      {/* Background decoration */}
-      <div className="fixed top-0 left-64 right-0 h-64 bg-zinc-100 dark:bg-zinc-900 border-b-2 border-black dark:border-white/20 -z-10" />
+    <div className="p-4 md:p-8 space-y-6 md:space-y-8 animate-fade-in relative z-10 w-full overflow-hidden">
+      {/* Background decoration - hidden on mobile */}
+      <div className="hidden md:block fixed top-0 left-64 right-0 h-64 bg-zinc-100 dark:bg-zinc-900 border-b-2 border-black dark:border-white/20 -z-10" />
 
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-4">

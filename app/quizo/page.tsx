@@ -59,14 +59,14 @@ export default function MyQuizzesPage() {
     }
 
     return (
-        <div className="flex-1 space-y-8 p-8 pt-6">
-            <div className="flex items-center justify-between">
+        <div className="flex-1 space-y-6 md:space-y-8 p-4 md:p-8 pt-4 md:pt-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Quizo Dashboard</h2>
-                    <p className="text-zinc-500">Manage your interactive quizzes.</p>
+                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Quizo Dashboard</h2>
+                    <p className="text-zinc-500 text-sm md:text-base">Manage your interactive quizzes.</p>
                 </div>
                 <Link href="/quizo/new">
-                    <button className="neo-button-primary flex items-center gap-2">
+                    <button className="neo-button-primary flex items-center gap-2 w-full sm:w-auto justify-center">
                         <Plus size={20} />
                         Create Quiz
                     </button>
