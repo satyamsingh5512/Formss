@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, Eye, Settings, Clock, Hash } from 'lucide-react';
+import { Plus, Eye, Settings, Clock, Hash, Users } from 'lucide-react';
 import Link from 'next/link';
 
 export default function MyQuizzesPage() {
@@ -100,19 +100,38 @@ export default function MyQuizzesPage() {
                                 </div>
                             </div>
 
-                            <div className="flex gap-3 pt-4 border-t-2 border-black/10 dark:border-white/10">
-                                <Link href={`/quiz/${quiz.id}`} className="flex-1">
-                                    <button className="w-full neo-button text-sm px-2 py-2 flex items-center justify-center gap-2">
-                                        <Eye size={16} />
-                                        View
+                            <div className="flex flex-col gap-2 pt-4 border-t-2 border-black/10 dark:border-white/10">
+                                {/* Share Link */}
+                                <div className="flex items-center gap-2 bg-zinc-100 dark:bg-zinc-800 rounded-lg p-2 text-xs">
+                                    <span className="text-zinc-500 font-medium">Share:</span>
+                                    <code className="flex-1 truncate font-mono text-black dark:text-white">
+                                        {typeof window !== 'undefined' ? `${window.location.origin}/quiz/${quiz.publicId}` : `/quiz/${quiz.publicId}`}
+                                    </code>
+                                    <button
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(`${window.location.origin}/quiz/${quiz.publicId}`);
+                                            alert('Link copied!');
+                                        }}
+                                        className="text-xs font-bold text-blue-600 hover:underline"
+                                    >
+                                        Copy
                                     </button>
-                                </Link>
-                                <Link href={`/dashboard/${quiz.id}/builder`} className="flex-1">
-                                    <button className="w-full neo-button-primary text-sm px-2 py-2 flex items-center justify-center gap-2">
-                                        <Settings size={16} />
-                                        Manage
-                                    </button>
-                                </Link>
+                                </div>
+
+                                <div className="flex gap-2">
+                                    <Link href={`/quiz/${quiz.publicId}`} className="flex-1">
+                                        <button className="w-full neo-button text-sm py-2 flex items-center justify-center gap-2">
+                                            <Eye size={16} />
+                                            Preview
+                                        </button>
+                                    </Link>
+                                    <Link href={`/dashboard/${quiz.id}/responses`} className="flex-1">
+                                        <button className="w-full neo-button text-sm py-2 flex items-center justify-center gap-2">
+                                            <Users size={16} />
+                                            {quiz._count?.responses || 0} Responses
+                                        </button>
+                                    </Link>
+                                </div>
                             </div>
                         </motion.div>
                     ))}
