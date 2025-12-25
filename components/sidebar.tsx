@@ -49,7 +49,7 @@ export function Sidebar({ currentPath }: { currentPath: string }) {
       <div className="p-4 md:p-6">
         <div className="flex items-center justify-between mb-6 md:mb-8">
           <div className="flex items-center justify-start">
-            <Logo width={120} height={32} className="md:w-[150px]" />
+            <Logo width={160} height={40} className="md:w-[180px]" />
           </div>
           {/* Close button for mobile */}
           <button
@@ -104,7 +104,7 @@ export function Sidebar({ currentPath }: { currentPath: string }) {
     <>
       {/* Mobile Header Bar */}
       <div className="fixed top-0 left-0 right-0 h-16 bg-white dark:bg-zinc-950 border-b-2 border-black dark:border-white/20 flex items-center justify-between px-4 z-40 md:hidden">
-        <Logo width={100} height={28} />
+        <Logo width={140} height={36} />
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <button
