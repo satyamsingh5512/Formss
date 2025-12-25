@@ -79,17 +79,7 @@ export function HeroSection() {
             </Link>
           </div>
 
-          {/* Social Proof Avatar Stack */}
-          <div className="pt-12 flex items-center justify-center gap-4">
-            <div className="flex -space-x-3">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="w-10 h-10 rounded-full border-2 border-black dark:border-white/20 bg-zinc-200 dark:bg-zinc-800" />
-              ))}
-            </div>
-            <div className="text-sm font-bold text-zinc-800 dark:text-zinc-300">
-              Trusted by 1000+ builders
-            </div>
-          </div>
+
 
         </motion.div>
       </div>
