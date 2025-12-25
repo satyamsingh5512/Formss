@@ -3,10 +3,11 @@
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { formatRelativeTime } from '@/lib/utils'
-import { BarChart3, Edit, MoreVertical, FileText } from 'lucide-react'
+import { BarChart3, Edit, MoreVertical, FileText, Trash2 } from 'lucide-react'
 import Link from 'next/link'
 import type { Form } from '@/types'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +17,8 @@ import {
 
 export function FormCard({ form }: { form: Form & { _count?: { responses: number, questions: number } } }) {
   const [isActive, setIsActive] = useState(form.isActive)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const router = useRouter()
 
   const toggleActive = async () => {
     try {
@@ -32,8 +35,31 @@ export function FormCard({ form }: { form: Form & { _count?: { responses: number
     }
   }
 
+  const deleteForm = async () => {
+    if (!confirm('Are you sure you want to delete this form? This cannot be undone.')) {
+      return
+    }
+
+    setIsDeleting(true)
+    try {
+      const response = await fetch(`/api/forms/${form.id}`, {
+        method: 'DELETE',
+      })
+      if (response.ok) {
+        router.refresh() // Refresh the page to update the list
+      } else {
+        alert('Failed to delete form')
+      }
+    } catch (error) {
+      console.error('Failed to delete form:', error)
+      alert('Failed to delete form')
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
   return (
-    <div className="neo-card group hover:-translate-y-1 transition-all duration-300 dark:shadow-neo-lg-dark relative flex flex-col h-full">
+    <div className={`neo-card group hover:-translate-y-1 transition-all duration-300 dark:shadow-neo-lg-dark relative flex flex-col h-full ${isDeleting ? 'opacity-50 pointer-events-none' : ''}`}>
       {/* Active Status Badge */}
       <div className={`absolute -top-3 -right-3 px-2 py-1 border-2 border-black dark:border-white/20 text-xs font-bold shadow-neo-sm transform rotate-3 z-10 ${isActive ? 'bg-green-300 text-black' : 'bg-zinc-200 text-zinc-500'}`}>
         {isActive ? 'ACTIVE' : 'INACTIVE'}
@@ -57,7 +83,8 @@ export function FormCard({ form }: { form: Form & { _count?: { responses: number
               <DropdownMenuItem onClick={toggleActive} className="focus:bg-zinc-100 dark:focus:bg-zinc-800 cursor-pointer text-black dark:text-white font-medium">
                 {isActive ? 'Deactivate' : 'Activate'}
               </DropdownMenuItem>
-              <DropdownMenuItem className="focus:bg-red-50 dark:focus:bg-red-900/20 cursor-pointer text-red-600 font-medium focus:text-red-700">
+              <DropdownMenuItem onClick={deleteForm} className="focus:bg-red-50 dark:focus:bg-red-900/20 cursor-pointer text-red-600 font-medium focus:text-red-700">
+                <Trash2 className="h-4 w-4 mr-2" />
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -93,3 +120,4 @@ export function FormCard({ form }: { form: Form & { _count?: { responses: number
     </div>
   )
 }
+
