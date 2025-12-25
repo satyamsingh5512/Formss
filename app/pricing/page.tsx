@@ -58,17 +58,17 @@ export default function PricingPage() {
                         </div>
 
                         {/* Per Form Plan - Highlighted */}
-                        <div className="neo-card border-2 border-black dark:border-white bg-black dark:bg-white text-white dark:text-black p-8 flex flex-col relative transform md:-translate-y-4 shadow-neo-lg">
+                        <div className="neo-card border-4 border-yellow-400 dark:border-yellow-500 bg-zinc-900 dark:bg-zinc-800 text-white p-8 flex flex-col relative transform md:-translate-y-4 shadow-neo-lg">
                             <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-yellow-400 text-black text-xs font-bold rounded-full border-2 border-black">
                                 MOST POPULAR
                             </div>
                             <div className="mb-6">
-                                <h3 className="text-xl font-bold mb-2">Per Form</h3>
-                                <p className="opacity-70 text-sm">Remove branding on each form</p>
+                                <h3 className="text-xl font-bold mb-2 text-white">Per Form</h3>
+                                <p className="text-zinc-300 text-sm">Remove branding on each form</p>
                             </div>
                             <div className="mb-6">
-                                <span className="text-4xl font-black">₹10</span>
-                                <span className="opacity-70"> / form</span>
+                                <span className="text-4xl font-black text-white">₹10</span>
+                                <span className="text-zinc-300"> / form</span>
                             </div>
                             <ul className="space-y-3 mb-8 flex-1">
                                 {[
@@ -78,14 +78,14 @@ export default function PricingPage() {
                                     "Full analytics",
                                     "Priority support",
                                 ].map((feature, i) => (
-                                    <li key={i} className="flex items-center gap-2 text-sm">
+                                    <li key={i} className="flex items-center gap-2 text-sm text-white">
                                         <Check className="h-4 w-4 text-green-400 flex-shrink-0" />
                                         <span>{feature}</span>
                                     </li>
                                 ))}
                             </ul>
                             <Link href="/dashboard">
-                                <button className="w-full py-3 bg-white dark:bg-black text-black dark:text-white border-2 border-white dark:border-black rounded-xl font-bold hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors flex items-center justify-center gap-2">
+                                <button className="w-full py-3 bg-yellow-400 text-black border-2 border-yellow-400 rounded-xl font-bold hover:bg-yellow-300 transition-colors flex items-center justify-center gap-2">
                                     <Crown className="h-4 w-4" />
                                     Upgrade Form
                                 </button>
