@@ -12,16 +12,15 @@ import {
   BarChart3,
   Settings,
   LogOut,
+  Brain,
 } from 'lucide-react'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
-  { icon: FileText, label: 'Forms', href: '/dashboard#forms' },
-  { icon: BarChart3, label: 'Analytics', href: '/dashboard#analytics' },
-  { icon: FileText, label: 'Quizo', href: '/quizo' },
-  { icon: Settings, label: 'Settings', href: '/dashboard/settings' },
+  { icon: FileText, label: 'My Forms', href: '/dashboard' },
+  { icon: Brain, label: 'Quizo', href: '/quizo' },
 ]
 
 export function Sidebar({ currentPath }: { currentPath: string }) {
