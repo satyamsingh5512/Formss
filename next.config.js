@@ -1,7 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['lh3.googleusercontent.com', 'uploadthing.com'],
+    remotePatterns: [
+      { protocol: "https", hostname: "lh3.googleusercontent.com" },
+      { protocol: "https", hostname: "utfs.io" }, // UploadThing new domain
+      { protocol: "https", hostname: "uploadthing.com" }
+    ],
   },
   experimental: {
     serverActions: {
