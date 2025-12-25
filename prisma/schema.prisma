@@ -77,6 +77,7 @@ model Form {
   allowMultiple   Boolean        @default(false)
   showProgress    Boolean        @default(true)
   shuffleQuestions Boolean       @default(false)
+  requireSignIn   Boolean        @default(false)  // Require respondents to sign in
   isPaid          Boolean        @default(false)
   purchaseId      String?        @unique @db.ObjectId
   purchase        FormPurchase?  @relation(fields: [purchaseId], references: [id])

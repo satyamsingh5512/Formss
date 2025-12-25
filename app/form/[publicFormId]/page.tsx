@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -13,13 +14,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast'
 import { QUESTION_TYPES } from '@/lib/constants'
 import { motion, AnimatePresence } from 'framer-motion'
-import { UploadCloud, CheckCircle2, AlertCircle } from 'lucide-react'
+import { UploadCloud, CheckCircle2, AlertCircle, LogIn } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import Link from 'next/link'
 
 export default function PublicFormPage() {
   const params = useParams()
   const router = useRouter()
   const { toast } = useToast()
+  const { data: session, status: sessionStatus } = useSession()
   const publicId = params.publicFormId as string
 
   const [form, setForm] = useState<any>(null)
@@ -27,6 +30,7 @@ export default function PublicFormPage() {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [requiresSignIn, setRequiresSignIn] = useState(false)
 
   const fetchForm = useCallback(async () => {
     try {
@@ -34,6 +38,11 @@ export default function PublicFormPage() {
       if (!response.ok) throw new Error('Form not found')
       const data = await response.json()
       setForm(data)
+
+      // Check if sign-in is required
+      if (data.requireSignIn) {
+        setRequiresSignIn(true)
+      }
     } catch (error) {
       toast({
         title: 'Error',
@@ -307,6 +316,29 @@ export default function PublicFormPage() {
           </div>
           <h2 className="text-xl font-black text-black dark:text-white mb-2">Form Not Found</h2>
           <p className="text-zinc-500 font-medium">This form is unavailable or has been deleted.</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Check if sign-in is required
+  if (requiresSignIn && !session) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950 p-4">
+        <div className="neo-card max-w-md w-full text-center p-8 bg-white dark:bg-zinc-900 border-2 border-black dark:border-white/20 shadow-neo-lg">
+          <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-6 border-2 border-black">
+            <LogIn className="h-8 w-8 text-yellow-600" />
+          </div>
+          <h2 className="text-2xl font-black text-black dark:text-white mb-2">Sign In Required</h2>
+          <p className="text-zinc-500 font-medium mb-6">
+            The creator of this form requires you to sign in before submitting your response.
+          </p>
+          <Link href={`/auth/signin?callbackUrl=/form/${publicId}`}>
+            <button className="neo-button-primary w-full py-3 text-lg flex items-center justify-center gap-2">
+              <LogIn className="h-5 w-5" />
+              Sign In to Continue
+            </button>
+          </Link>
         </div>
       </div>
     )

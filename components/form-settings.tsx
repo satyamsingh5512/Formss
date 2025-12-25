@@ -19,6 +19,7 @@ interface FormSettingsProps {
     allowMultiple?: boolean
     showProgress?: boolean
     shuffleQuestions?: boolean
+    requireSignIn?: boolean
   }
   onUpdate: (settings: any) => void
 }
@@ -33,6 +34,7 @@ export function FormSettings({ formId, settings, onUpdate }: FormSettingsProps) 
   const [allowMultiple, setAllowMultiple] = useState(settings.allowMultiple || false)
   const [showProgress, setShowProgress] = useState(settings.showProgress ?? true)
   const [shuffleQuestions, setShuffleQuestions] = useState(settings.shuffleQuestions || false)
+  const [requireSignIn, setRequireSignIn] = useState(settings.requireSignIn || false)
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -88,6 +90,7 @@ export function FormSettings({ formId, settings, onUpdate }: FormSettingsProps) 
       allowMultiple,
       showProgress,
       shuffleQuestions,
+      requireSignIn,
     }
 
     try {
@@ -286,6 +289,20 @@ export function FormSettings({ formId, settings, onUpdate }: FormSettingsProps) 
                         checked={shuffleQuestions}
                         onCheckedChange={setShuffleQuestions}
                         className="data-[state=checked]:bg-black dark:data-[state=checked]:bg-white"
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between p-4 rounded-xl bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-400 dark:border-yellow-600">
+                      <div className="space-y-0.5">
+                        <Label className="text-black dark:text-white font-bold">Require Sign In</Label>
+                        <p className="text-xs text-zinc-500 font-medium">
+                          Respondents must sign in before submitting
+                        </p>
+                      </div>
+                      <Switch
+                        checked={requireSignIn}
+                        onCheckedChange={setRequireSignIn}
+                        className="data-[state=checked]:bg-yellow-500 dark:data-[state=checked]:bg-yellow-400"
                       />
                     </div>
                   </TabsContent>
