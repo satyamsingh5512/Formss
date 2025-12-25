@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -19,11 +19,7 @@ export default function AnalyticsPage() {
   const [analytics, setAnalytics] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetchAnalytics()
-  }, [formId])
-
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     try {
       const response = await fetch(`/api/forms/${formId}/analytics`)
       const data = await response.json()
@@ -33,7 +29,11 @@ export default function AnalyticsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [formId])
+
+  useEffect(() => {
+    fetchAnalytics()
+  }, [fetchAnalytics])
 
   const exportCSV = async () => {
     try {
@@ -60,6 +60,24 @@ export default function AnalyticsPage() {
             <div className="h-32 bg-gray-200 rounded"></div>
             <div className="h-64 bg-gray-200 rounded"></div>
           </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!analytics) {
+    return (
+      <div className="p-8">
+        <div className="max-w-7xl mx-auto">
+          <Link href="/dashboard">
+            <Button variant="ghost">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Dashboard
+            </Button>
+          </Link>
+          <Card className="mt-6 p-12 text-center">
+            <p className="text-muted-foreground">Failed to load analytics data</p>
+          </Card>
         </div>
       </div>
     )

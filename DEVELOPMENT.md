@@ -1,4 +1,4 @@
-# FormSS Development Notes
+# Formlytic Development Notes
 
 ## Project Overview
 A complete Google Forms-style platform with modern UI/UX, built using:
@@ -423,4 +423,4 @@ Response: {
 
 **Last Updated**: November 2025
 **Version**: 1.0.0
-**Author**: FormSS Team
+**Author**: Formlytic Team

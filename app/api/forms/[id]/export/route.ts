@@ -5,9 +5,10 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -15,7 +16,7 @@ export async function GET(
 
     const form = await prisma.form.findFirst({
       where: {
-        id: params.id,
+        id,
         creatorId: session.user.id,
       },
       include: {
@@ -33,7 +34,7 @@ export async function GET(
 
     const responses = await prisma.response.findMany({
       where: {
-        formId: params.id,
+        formId: id,
       },
       orderBy: {
         createdAt: 'desc',
@@ -60,7 +61,7 @@ export async function GET(
     return new NextResponse(csv, {
       headers: {
         'Content-Type': 'text/csv',
-        'Content-Disposition': `attachment; filename="form-${params.id}-responses.csv"`,
+        'Content-Disposition': `attachment; filename="form-${id}-responses.csv"`,
       },
     })
   } catch (error) {

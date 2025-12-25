@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🚀 Setting up FormSS - Modern Form Builder Platform"
+echo "🚀 Setting up Formlytic - Modern Form Builder Platform"
 echo "=================================================="
 echo ""
 

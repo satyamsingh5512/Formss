@@ -2,25 +2,39 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { DndContext, closestCenter, DragEndEvent } from '@dnd-kit/core'
+import { DndContext, closestCenter, DragEndEvent, DragOverlay, useSensor, useSensors, PointerSensor } from '@dnd-kit/core'
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { QuestionBlock } from '@/components/form-builder/question-block'
 import { QuestionTypeSelector } from '@/components/form-builder/question-type-selector'
-import { ThemeToggle } from '@/components/theme-toggle'
-import { ArrowLeft, Save, Eye, LogIn } from 'lucide-react'
+import { ArrowLeft, Eye, Crown, Rocket } from 'lucide-react'
 import Link from 'next/link'
 import type { Question } from '@/types'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export default function GuestBuilderPage() {
   const router = useRouter()
   const [formTitle, setFormTitle] = useState('Untitled Form')
   const [formDescription, setFormDescription] = useState('')
   const [questions, setQuestions] = useState<Question[]>([])
+  const [activeId, setActiveId] = useState<string | null>(null)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  )
+
+  const handleDragStart = (event: any) => {
+    setActiveId(event.active.id)
+  }
 
   const handleDragEnd = (event: DragEndEvent) => {
+    setActiveId(null)
     const { active, over } = event
     if (over && active.id !== over.id) {
       setQuestions((items) => {
@@ -34,15 +48,18 @@ export default function GuestBuilderPage() {
   const addQuestion = (type: Question['type']) => {
     const newQuestion: Question = {
       id: `q-${Date.now()}`,
+      formId: 'guest-form',
       type,
       label: '',
       required: false,
       order: questions.length,
+      createdAt: new Date(),
+      updatedAt: new Date(),
       options: type === 'multiple_choice' || type === 'checkboxes' || type === 'dropdown'
         ? { choices: ['Option 1'] }
         : type === 'linear_scale'
-        ? { min: 1, max: 5 }
-        : undefined,
+          ? { min: 1, max: 5 }
+          : undefined,
     }
     setQuestions([...questions, newQuestion])
   }
@@ -68,7 +85,6 @@ export default function GuestBuilderPage() {
   }
 
   const handlePublish = () => {
-    // Save to localStorage for guest users
     const guestForm = {
       title: formTitle,
       description: formDescription,
@@ -76,13 +92,10 @@ export default function GuestBuilderPage() {
       createdAt: new Date().toISOString()
     }
     localStorage.setItem('guestForm', JSON.stringify(guestForm))
-    
-    // Redirect to sign in with a message
     router.push('/auth/signin?redirect=publish')
   }
 
   const handlePreview = () => {
-    // Save to localStorage
     const guestForm = {
       title: formTitle,
       description: formDescription,
@@ -93,84 +106,146 @@ export default function GuestBuilderPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white dark:bg-zinc-950 text-black dark:text-white transition-colors duration-300">
+
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between px-4">
+      <motion.header
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="sticky top-0 z-50 border-b-2 border-black dark:border-white/20 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md"
+      >
+        <div className="container flex h-16 items-center justify-between px-4 max-w-6xl mx-auto">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" asChild>
-              <Link href="/">
+            <Link href="/">
+              <Button variant="ghost" size="icon" className="text-black dark:text-white hover:bg-black/5 dark:hover:bg-white/10">
                 <ArrowLeft className="h-5 w-5" />
-              </Link>
-            </Button>
-            <div>
-              <h1 className="text-lg font-semibold">Form Builder (Guest Mode)</h1>
-              <p className="text-xs text-muted-foreground">Sign in to save and publish</p>
+              </Button>
+            </Link>
+            <div className="hidden sm:block">
+              <h1 className="text-sm font-bold flex items-center gap-2">
+                Guest Mode
+                <span className="px-2 py-0.5 rounded-full bg-black dark:bg-white text-white dark:text-black text-[10px] font-black tracking-wider uppercase">
+                  Builder
+                </span>
+              </h1>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <Button variant="outline" size="sm" onClick={handlePreview} disabled={questions.length === 0}>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handlePreview}
+              disabled={questions.length === 0}
+              className="hidden sm:flex border-2 border-black dark:border-white/20 hover:bg-black/5 hover:text-black dark:hover:text-white text-zinc-600 dark:text-zinc-400 font-bold"
+            >
               <Eye className="h-4 w-4 mr-2" />
               Preview
             </Button>
-            <Button size="sm" onClick={handlePublish} disabled={questions.length === 0}>
-              <LogIn className="h-4 w-4 mr-2" />
-              Sign In to Publish
+            <Button
+              size="sm"
+              onClick={handlePublish}
+              disabled={questions.length === 0}
+              className="neo-button-primary rounded-lg text-sm"
+            >
+              <Rocket className="h-4 w-4 mr-2" />
+              Publish
             </Button>
           </div>
         </div>
-      </header>
+      </motion.header>
 
-      <div className="container max-w-4xl mx-auto py-8 px-4 space-y-6">
+      <div className="container max-w-3xl mx-auto py-12 px-4 space-y-8 relative z-10 pb-32">
         {/* Info Banner */}
-        <Card className="border-primary/50 bg-primary/5">
-          <CardContent className="pt-6">
-            <div className="flex items-start gap-3">
-              <LogIn className="h-5 w-5 text-primary mt-0.5" />
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <div className="neo-card bg-indigo-50 dark:bg-indigo-950/30 border-2 border-black dark:border-indigo-500/30 shadow-neo-sm">
+            <div className="flex items-start gap-4">
+              <div className="p-2 rounded-lg bg-black dark:bg-indigo-500 text-white">
+                <Crown className="h-5 w-5" />
+              </div>
               <div>
-                <p className="font-medium">You're in guest mode</p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Create your form freely. Sign in when ready to publish and collect responses.
+                <h3 className="font-bold text-black dark:text-white mb-1">Start building for free</h3>
+                <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed font-medium">
+                  Design your perfect form below. When you're ready to collect responses and unlock analytics, simply sign in to publish.
                 </p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </motion.div>
 
         {/* Form Header */}
-        <Card>
-          <CardHeader>
-            <Input
-              value={formTitle}
-              onChange={(e) => setFormTitle(e.target.value)}
-              className="text-2xl font-bold border-none p-0 h-auto focus-visible:ring-0"
-              placeholder="Form Title"
-            />
-            <Input
-              value={formDescription}
-              onChange={(e) => setFormDescription(e.target.value)}
-              className="text-muted-foreground border-none p-0 h-auto focus-visible:ring-0"
-              placeholder="Form description (optional)"
-            />
-          </CardHeader>
-        </Card>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <div className="neo-card border-t-[8px] border-t-black dark:border-t-white relative group">
+            <div className="space-y-4">
+              <Input
+                value={formTitle}
+                onChange={(e) => setFormTitle(e.target.value)}
+                className="text-3xl md:text-4xl font-black bg-transparent border-none p-0 h-auto focus-visible:ring-0 placeholder:text-zinc-400 text-black dark:text-white selection:bg-indigo-500/30"
+                placeholder="Untitled Form"
+              />
+              <Input
+                value={formDescription}
+                onChange={(e) => setFormDescription(e.target.value)}
+                className="text-zinc-500 dark:text-zinc-400 bg-transparent border-none p-0 h-auto focus-visible:ring-0 text-base placeholder:text-zinc-400 font-medium"
+                placeholder="Form description"
+              />
+            </div>
+            {/* Sticker */}
+            <div className="absolute -top-6 -right-6 rotate-12 bg-yellow-300 border-2 border-black px-3 py-1 text-xs font-black shadow-neo-sm">
+              DRAFT
+            </div>
+          </div>
+        </motion.div>
 
         {/* Questions */}
-        <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+        >
           <SortableContext items={questions.map((q) => q.id)} strategy={verticalListSortingStrategy}>
-            <div className="space-y-4">
-              {questions.map((question) => (
-                <QuestionBlock
-                  key={question.id}
-                  question={question}
-                  onUpdate={updateQuestion}
-                  onDelete={deleteQuestion}
-                  onDuplicate={duplicateQuestion}
-                />
-              ))}
+            <div className="space-y-6">
+              <AnimatePresence>
+                {questions.map((question) => (
+                  <motion.div
+                    key={question.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <QuestionBlock
+                      question={question}
+                      onUpdate={updateQuestion}
+                      onDelete={deleteQuestion}
+                      onDuplicate={duplicateQuestion}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
           </SortableContext>
+
+          <DragOverlay>
+            {activeId ? (
+              <div className="opacity-90 rotate-2 cursor-grabbing">
+                <QuestionBlock
+                  question={questions.find(q => q.id === activeId)!}
+                  onUpdate={() => { }}
+                  onDelete={() => { }}
+                  onDuplicate={() => { }}
+                />
+              </div>
+            ) : null}
+          </DragOverlay>
         </DndContext>
 
         {/* Add Question */}
@@ -178,12 +253,17 @@ export default function GuestBuilderPage() {
 
         {/* Empty State */}
         {questions.length === 0 && (
-          <Card className="border-dashed">
-            <CardContent className="pt-12 pb-12 text-center">
-              <p className="text-muted-foreground mb-4">No questions yet. Add your first question to get started.</p>
-              <p className="text-sm text-muted-foreground">Click the button above to add a question</p>
-            </CardContent>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-12"
+          >
+            <div className="w-16 h-16 rounded-xl bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center mx-auto mb-4 border-2 border-black dark:border-white/20 shadow-neo-sm">
+              <Rocket className="h-8 w-8 text-black dark:text-white" />
+            </div>
+            <p className="text-zinc-500 dark:text-zinc-400 mb-2 font-bold">Your form is empty</p>
+            <p className="text-sm text-zinc-600 dark:text-zinc-500 font-medium">Add a question to get started</p>
+          </motion.div>
         )}
       </div>
     </div>

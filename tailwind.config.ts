@@ -18,6 +18,10 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['var(--font-outfit)', 'sans-serif'],
+        heading: ['var(--font-space)', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -25,32 +29,12 @@ const config = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#2563EB",
+          DEFAULT: "#000000",
           foreground: "#FFFFFF",
-          50: "#EFF6FF",
-          100: "#DBEAFE",
-          200: "#BFDBFE",
-          300: "#93C5FD",
-          400: "#60A5FA",
-          500: "#2563EB",
-          600: "#1D4ED8",
-          700: "#1E40AF",
-          800: "#1E3A8A",
-          900: "#1E3A8A",
         },
         secondary: {
-          DEFAULT: "#6366F1",
-          foreground: "#FFFFFF",
-          50: "#EEF2FF",
-          100: "#E0E7FF",
-          200: "#C7D2FE",
-          300: "#A5B4FC",
-          400: "#818CF8",
-          500: "#6366F1",
-          600: "#4F46E5",
-          700: "#4338CA",
-          800: "#3730A3",
-          900: "#312E81",
+          DEFAULT: "#ffffff",
+          foreground: "#000000",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
@@ -72,11 +56,27 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        "pastel-blue": "#c9daff",
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      boxShadow: {
+        "neo": "4px 4px 0px 0px #000000",
+        "neo-sm": "2px 2px 0px 0px #000000",
+        "neo-lg": "8px 8px 0px 0px #000000",
+        "neo-dark": "4px 4px 0px 0px #757373",
+        "neo-sm-dark": "2px 2px 0px 0px #757373",
+        "neo-lg-dark": "8px 8px 0px 0px #757373",
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+        "slide-in": "slide-in 0.3s ease-out",
+        "fade-in": "fade-in 0.2s ease-out",
+        "spotlight": "spotlight 2s ease .75s 1 forwards",
       },
       keyframes: {
         "accordion-down": {
@@ -95,12 +95,16 @@ const config = {
           from: { opacity: "0" },
           to: { opacity: "1" },
         },
-      },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
-        "slide-in": "slide-in 0.3s ease-out",
-        "fade-in": "fade-in 0.2s ease-out",
+        spotlight: {
+          "0%": {
+            opacity: "0",
+            transform: "translate(-72%, -62%) scale(0.5)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translate(-50%,-40%) scale(1)",
+          },
+        },
       },
     },
   },

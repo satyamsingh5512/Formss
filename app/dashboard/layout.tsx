@@ -15,9 +15,9 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Sidebar currentPath="/dashboard" />
-      <div className="ml-64">
+      <div className="ml-64 min-h-screen bg-transparent transition-colors duration-300">
         {children}
       </div>
     </div>

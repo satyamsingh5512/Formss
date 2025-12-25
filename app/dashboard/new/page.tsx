@@ -55,7 +55,7 @@ export default function NewFormPage() {
         const questionsResponse = await fetch(`/api/forms/${form.id}/questions`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ questions: guestQuestions }),
+          body: JSON.stringify(guestQuestions),
         })
 
         if (!questionsResponse.ok) {

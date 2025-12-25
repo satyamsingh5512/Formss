@@ -4,12 +4,13 @@ import { z } from 'zod'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { publicId: string } }
+  { params }: { params: Promise<{ publicId: string }> }
 ) {
   try {
+    const { publicId } = await params
     const form = await prisma.form.findUnique({
       where: {
-        publicId: params.publicId,
+        publicId,
       },
       include: {
         questions: {
@@ -33,12 +34,13 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { publicId: string } }
+  { params }: { params: Promise<{ publicId: string }> }
 ) {
   try {
+    const { publicId } = await params
     const form = await prisma.form.findUnique({
       where: {
-        publicId: params.publicId,
+        publicId,
       },
     })
 

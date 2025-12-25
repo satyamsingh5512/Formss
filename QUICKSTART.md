@@ -1,4 +1,4 @@
-# 🚀 Quick Start Guide - FormSS
+# 🚀 Quick Start Guide - Formlytic
 
 Get your form builder running in 5 minutes!
 

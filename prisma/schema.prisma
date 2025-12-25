@@ -3,12 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id            String         @id @default(cuid())
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
   name          String?
   email         String         @unique
   emailVerified DateTime?
@@ -24,17 +24,17 @@ model User {
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String? @db.String
+  access_token      String? @db.String
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String? @db.String
   session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -43,14 +43,15 @@ model Account {
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
   sessionToken String   @unique
-  userId       String
+  userId       String   @db.ObjectId
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
   identifier String
   token      String   @unique
   expires    DateTime
@@ -59,10 +60,10 @@ model VerificationToken {
 }
 
 model Form {
-  id              String         @id @default(cuid())
+  id              String         @id @default(auto()) @map("_id") @db.ObjectId
   title           String
-  description     String?        @db.Text
-  creatorId       String
+  description     String?
+  creatorId       String         @db.ObjectId
   creator         User           @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   questions       Question[]
   responses       Response[]
@@ -77,26 +78,41 @@ model Form {
   showProgress    Boolean        @default(true)
   shuffleQuestions Boolean       @default(false)
   isPaid          Boolean        @default(false)
-  purchaseId      String?        @unique
+  purchaseId      String?        @unique @db.ObjectId
   purchase        FormPurchase?  @relation(fields: [purchaseId], references: [id])
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
+  // Quizo Features
+  isQuiz          Boolean        @default(false)
+  accessCode      String?        @unique
+  timerType       String?        @default("none") // "none", "quiz", "question"
+  timeLimit       Int?           @default(0)      // Total time in seconds
+  perQuestionTime Int?           @default(0)      // Per question time in seconds
+  allowSkip       Boolean        @default(true)
+  college         String?
+  clubName        String?
+
   @@index([creatorId])
-  @@index([publicId])
 }
 
 model Question {
-  id          String   @id @default(cuid())
-  formId      String
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  formId      String   @db.ObjectId
   form        Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
   type        String
-  label       String   @db.Text
-  description String?  @db.Text
+  label       String
+  description String?
   required    Boolean  @default(false)
   options     Json?
   validation  Json?
   order       Int
+  
+  // Quizo Features
+  correctAnswer String?
+  points        Int?    @default(1)
+  timeLimit     Int?    // specific time limit overrides form default
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -104,22 +120,29 @@ model Question {
 }
 
 model Response {
-  id         String   @id @default(cuid())
-  formId     String
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  formId     String   @db.ObjectId
   form       Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
   answers    Json
   metadata   Json?
   ipAddress  String?
-  userAgent  String?  @db.Text
+  userAgent  String?
   createdAt  DateTime @default(now())
+
+  // Quizo Features
+  isQuizAttempt   Boolean  @default(false)
+  score           Int?
+  maxScore        Int?
+  timeTaken       Int?     // Seconds
+  completedAt     DateTime?
 
   @@index([formId])
   @@index([createdAt])
 }
 
 model Subscription {
-  id            String   @id @default(cuid())
-  userId        String   @unique
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String   @unique @db.ObjectId
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   plan          String   @default("organization")
   status        String   @default("active")
@@ -132,15 +155,14 @@ model Subscription {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  @@index([userId])
   @@index([status])
 }
 
 model FormPurchase {
-  id            String   @id @default(cuid())
-  userId        String
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String   @db.ObjectId
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  formId        String?  @unique
+  formId        String?  @unique @db.ObjectId
   form          Form?
   amount        Int      @default(10)
   currency      String   @default("INR")

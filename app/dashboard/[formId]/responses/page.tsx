@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -16,11 +16,7 @@ export default function ResponsesPage() {
   const [responses, setResponses] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetchData()
-  }, [formId])
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [formRes, responsesRes] = await Promise.all([
         fetch(`/api/forms/${formId}`),
@@ -37,7 +33,11 @@ export default function ResponsesPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [formId])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   if (loading) {
     return <div className="p-8">Loading...</div>

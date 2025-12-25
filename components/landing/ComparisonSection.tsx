@@ -59,7 +59,7 @@ export function ComparisonSection() {
                   <th className="text-left p-6 text-[#94A3B8] font-medium">Feature</th>
                   <th className="p-6 text-center">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#6366F1] to-[#06B6D4] text-white font-bold">
-                      FormSS
+                      Formlytic
                     </div>
                   </th>
                   <th className="p-6 text-center text-[#94A3B8] font-medium">Google Forms</th>

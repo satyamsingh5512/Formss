@@ -16,9 +16,10 @@ const questionSchema = z.object({
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -26,7 +27,7 @@ export async function POST(
 
     const form = await prisma.form.findFirst({
       where: {
-        id: params.id,
+        id,
         creatorId: session.user.id,
       },
     })
@@ -41,7 +42,7 @@ export async function POST(
     const question = await prisma.question.create({
       data: {
         ...validatedData,
-        formId: params.id,
+        formId: id,
       },
     })
 
@@ -57,9 +58,10 @@ export async function POST(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -67,7 +69,7 @@ export async function PUT(
 
     const form = await prisma.form.findFirst({
       where: {
-        id: params.id,
+        id,
         creatorId: session.user.id,
       },
     })
@@ -82,7 +84,7 @@ export async function PUT(
     // Delete all existing questions
     await prisma.question.deleteMany({
       where: {
-        formId: params.id,
+        formId: id,
       },
     })
 
@@ -98,7 +100,7 @@ export async function PUT(
             options: q.options,
             validation: q.validation,
             order: q.order,
-            formId: params.id,
+            formId: id,
           },
         })
       )

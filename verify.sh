@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# FormSS Installation Verification Script
+# Formlytic Installation Verification Script
 # This script checks if all required files are present
 
-echo "🔍 FormSS Installation Verification"
+echo "🔍 Formlytic Installation Verification"
 echo "===================================="
 echo ""
 

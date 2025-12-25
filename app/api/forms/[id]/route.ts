@@ -14,9 +14,10 @@ const updateFormSchema = z.object({
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -24,7 +25,7 @@ export async function GET(
 
     const form = await prisma.form.findFirst({
       where: {
-        id: params.id,
+        id,
         creatorId: session.user.id,
       },
       include: {
@@ -54,9 +55,10 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -67,7 +69,7 @@ export async function PATCH(
 
     const form = await prisma.form.findFirst({
       where: {
-        id: params.id,
+        id,
         creatorId: session.user.id,
       },
     })
@@ -78,7 +80,7 @@ export async function PATCH(
 
     const updatedForm = await prisma.form.update({
       where: {
-        id: params.id,
+        id,
       },
       data: validatedData,
     })
@@ -95,9 +97,10 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -105,7 +108,7 @@ export async function DELETE(
 
     const form = await prisma.form.findFirst({
       where: {
-        id: params.id,
+        id,
         creatorId: session.user.id,
       },
     })
@@ -116,7 +119,7 @@ export async function DELETE(
 
     await prisma.form.delete({
       where: {
-        id: params.id,
+        id,
       },
     })
 

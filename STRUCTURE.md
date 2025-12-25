@@ -1,4 +1,4 @@
-# 📁 FormSS - Complete Project Structure
+# 📁 Formlytic - Complete Project Structure
 
 ```
 formss/
