@@ -91,6 +91,30 @@ export function HeroSection() {
             </div>
           </div>
 
+          {/* Company Logos */}
+          <div className="pt-10 flex flex-wrap items-center justify-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+            {/* Stripe-like Logo */}
+            <svg className="h-8 w-auto text-black dark:text-white" viewBox="0 0 100 30" fill="currentcolor">
+              <path d="M10,5 L30,5 L30,25 L10,25 Z M40,5 L60,5 L60,25 L40,25 Z M70,5 L90,5 L90,25 L70,25 Z" />
+            </svg>
+            {/* Vercel-like Logo */}
+            <svg className="h-6 w-auto text-black dark:text-white" viewBox="0 0 1155 1000" fill="currentcolor">
+              <path d="M577.344 0L1154.69 1000H0L577.344 0Z" />
+            </svg>
+            {/* Abstract Circle Logo */}
+            <svg className="h-8 w-auto text-black dark:text-white" viewBox="0 0 100 100" fill="currentcolor">
+              <circle cx="50" cy="50" r="40" strokeWidth="10" stroke="currentColor" fill="none" />
+            </svg>
+            {/* Square Logo */}
+            <svg className="h-7 w-auto text-black dark:text-white" viewBox="0 0 100 100" fill="currentcolor">
+              <rect x="10" y="10" width="80" height="80" rx="10" />
+            </svg>
+            {/* Next.js-like Logo */}
+            <svg className="h-8 w-auto text-black dark:text-white" viewBox="0 0 100 100" fill="currentcolor">
+              <path d="M50 0C22.4 0 0 22.4 0 50s22.4 50 50 50 50-22.4 50-50S77.6 0 50 0zm29 73.1L35.6 30h-4.3v40h6.1V39l35.8 40.5c-3.7 4.2-9 6.9-14.2 6.9z" />
+            </svg>
+          </div>
+
         </motion.div>
       </div>
 
