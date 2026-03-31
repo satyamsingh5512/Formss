@@ -190,12 +190,14 @@ export default function FormBuilderPage() {
           <FormSettings
             formId={formId}
             settings={{
+              formSettings: form?.settings,
               logoUrl: form?.logoUrl,
               organizationName: form?.organizationName,
               headerColor: form?.headerColor,
               allowMultiple: form?.allowMultiple,
               showProgress: form?.showProgress,
               shuffleQuestions: form?.shuffleQuestions,
+              allowedEmailDomains: form?.settings?.allowedEmailDomains,
             }}
             onUpdate={(settings) => setForm({ ...form, ...settings })}
           />
