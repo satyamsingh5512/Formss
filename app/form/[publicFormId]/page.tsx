@@ -85,23 +85,31 @@ export default function PublicFormPage() {
         body: JSON.stringify({ answers }),
       })
 
-      if (!response.ok) throw new Error('Submission failed')
+      const result = await response.json().catch(() => null)
+
+      if (!response.ok) {
+        throw new Error(result?.error || 'Submission failed')
+      }
 
       setSubmitted(true)
       toast({
         title: 'Success',
         description: 'Your response has been recorded',
       })
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: 'Error',
-        description: 'Failed to submit form',
+        description: error?.message || 'Failed to submit form',
         variant: 'destructive',
       })
     } finally {
       setSubmitting(false)
     }
   }
+
+  const allowedEmailDomains: string[] = Array.isArray(form?.settings?.allowedEmailDomains)
+    ? form.settings.allowedEmailDomains
+    : []
 
   const renderQuestion = (question: any) => {
     const value = answers[question.id]
@@ -466,6 +474,13 @@ export default function PublicFormPage() {
             transition={{ delay: 0.5 }}
             className="pt-6"
           >
+            {allowedEmailDomains.length > 0 && (
+              <div className="mb-4 p-4 rounded-xl bg-yellow-50 dark:bg-yellow-900/20 border-2 border-yellow-400 dark:border-yellow-600">
+                <p className="text-sm font-bold text-black dark:text-white">
+                  Only email addresses from: {allowedEmailDomains.map((domain) => `@${domain}`).join(', ')} can submit this form.
+                </p>
+              </div>
+            )}
             <button
               type="submit"
               disabled={submitting}

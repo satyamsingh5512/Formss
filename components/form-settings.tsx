@@ -15,6 +15,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 interface FormSettingsProps {
   formId: string
   settings: {
+    formSettings?: Record<string, any>
     logoUrl?: string
     organizationName?: string
     headerColor?: string
@@ -22,6 +23,7 @@ interface FormSettingsProps {
     showProgress?: boolean
     shuffleQuestions?: boolean
     requireSignIn?: boolean
+    allowedEmailDomains?: string[]
   }
   onUpdate: (settings: any) => void
 }
@@ -43,6 +45,9 @@ export function FormSettings({ formId, settings, onUpdate }: FormSettingsProps) 
   const [showProgress, setShowProgress] = useState(settings.showProgress ?? true)
   const [shuffleQuestions, setShuffleQuestions] = useState(settings.shuffleQuestions || false)
   const [requireSignIn, setRequireSignIn] = useState(settings.requireSignIn || false)
+  const [allowedEmailDomains, setAllowedEmailDomains] = useState(
+    (settings.allowedEmailDomains || []).join(', ')
+  )
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -91,6 +96,15 @@ export function FormSettings({ formId, settings, onUpdate }: FormSettingsProps) 
   }
 
   const handleSave = async () => {
+    const parsedAllowedEmailDomains = Array.from(
+      new Set(
+        allowedEmailDomains
+          .split(/[\s,]+/)
+          .map((domain) => domain.trim().toLowerCase().replace(/^@/, ''))
+          .filter(Boolean)
+      )
+    )
+
     const updatedSettings = {
       logoUrl: logoPreview,
       organizationName,
@@ -99,6 +113,10 @@ export function FormSettings({ formId, settings, onUpdate }: FormSettingsProps) 
       showProgress,
       shuffleQuestions,
       requireSignIn,
+      settings: {
+        ...(settings.formSettings || {}),
+        allowedEmailDomains: parsedAllowedEmailDomains,
+      },
     }
 
     try {
@@ -328,6 +346,19 @@ export function FormSettings({ formId, settings, onUpdate }: FormSettingsProps) 
                         checked={requireSignIn}
                         onCheckedChange={setRequireSignIn}
                         className="data-[state=checked]:bg-yellow-500 dark:data-[state=checked]:bg-yellow-400"
+                      />
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-zinc-50 dark:bg-white/5 border-2 border-black/10 dark:border-white/10 space-y-2">
+                      <Label className="text-black dark:text-white font-bold">Allowed Email Domains</Label>
+                      <p className="text-xs text-zinc-500 font-medium">
+                        Only emails from these domains can submit (example: nist.edu, college.edu)
+                      </p>
+                      <Input
+                        value={allowedEmailDomains}
+                        onChange={(e) => setAllowedEmailDomains(e.target.value)}
+                        placeholder="nist.edu, college.edu"
+                        className="bg-white dark:bg-zinc-900 border-2 border-black/10 dark:border-white/10 text-black dark:text-white placeholder:text-zinc-400 focus-visible:border-black dark:focus-visible:border-white rounded-lg"
                       />
                     </div>
                   </TabsContent>
